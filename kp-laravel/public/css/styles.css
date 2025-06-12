@@ -1,0 +1,410 @@
+:root {
+    --warna0: white;
+    --warna1: black;
+    --warna2: #753422;
+    --warna3: #B05B3B;
+    --warna4: #D79771;
+    --warna6: #FFEBC9;
+
+
+    --warna5: #FFF4E0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman';
+    font-size: 17px;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.btn-close {
+    transition: all 0.2s ease;
+}
+
+.btn-close:hover,
+.btn-close:focus,
+.btn-close:active {
+    background-color: var(--warna5) !important;
+    color: var(--warna1) !important;
+    --bs-btn-close-focus-shadow: none;
+}
+
+html {
+    background-color: var(--warna6);
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+i,
+.fa,
+.bi {
+    vertical-align: middle;
+    line-height: 1;
+    display: inline-block;
+}
+
+.main-content .custom-alert-1 {
+    background-color: var(--warna3);
+    color: white;
+    border: 4px solid var(--warna2);
+}
+
+.main-content .custom-alert-2 {
+    background-color: var(--warna4);
+    color: white;
+    border: 4px solid var(--warna2);
+
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+.offcanvas.offcanvas-start {
+    background: linear-gradient(180deg, var(--warna2), var(--warna3)) !important;
+    color: var(--warna0) !important;
+    padding: 20px;
+}
+
+.offcanvas.offcanvas-start .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.offcanvas.offcanvas-start .offcanvas-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.offcanvas.offcanvas-start .offcanvas-body {
+    padding: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.offcanvas.offcanvas-start .offcanvas-body ::-webkit-scrollbar {
+    display: none;
+}
+
+.offcanvas.offcanvas-start ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.offcanvas.offcanvas-start ul li {
+    margin: 10px 0;
+}
+
+.offcanvas.offcanvas-start ul li a {
+    color: var(--warna0);
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background 0.3s;
+    font-size: 16px;
+}
+
+.offcanvas.offcanvas-start ul li a:hover,
+.offcanvas.offcanvas-start ul li.active a {
+    background-color: var(--warna3);
+    color: var(--warna0);
+}
+
+.offcanvas.offcanvas-start i {
+    margin-right: 10px;
+}
+
+.sidebar {
+    width: 250px;
+    background: linear-gradient(90deg, var(--warna2), var(--warna4));
+    color: var(--warna0);
+    position: fixed;
+    height: 100vh;
+    width: 250px;
+    padding-top: 20px;
+    padding: 10px;
+    z-index: 10;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+
+}
+
+.sidebar ul li a {
+    color: var(--warna0);
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background 0.3s;
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li.active a {
+    background-color: var(--warna3);
+    color: var(--warna0);
+
+}
+
+.tu-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tu-info i {
+    font-size: 20px;
+    color: var(--warna1);
+}
+
+.main-content {
+    min-height: 100vh;
+    padding: 20px;
+    background-color: var(--warna6);
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+
+}
+
+.main h1 {
+    font-size: 28px;
+    color: var(--dark-color);
+    margin-left: 10px;
+}
+
+main .card {
+    background-color: var(--warna0);
+    box-shadow: none;
+    border-bottom: 10px solid var(--warna2);
+    margin-bottom: 10px;
+
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+
+}
+
+thead {
+    background-color: var(--warna2);
+    padding: 20px;
+    box-shadow: none;
+    width: 100%;
+    margin: auto;
+    color: var(--warna0);
+
+}
+
+tbody {
+    background-color: var(--warna0);
+}
+
+tfoot {
+    background-color: var(--warna2);
+    color: var(--warna0);
+}
+
+
+main .btn-ukuran {
+    max-width: 200px;
+}
+
+input.form-control,
+select.form-select,
+textarea.form-control {
+    border: 4px solid var(--warna2);
+}
+
+input.form-control:focus,
+select.form-select:focus,
+textarea.form-control:focus {
+    border-color: var(--warna2);
+    box-shadow: none;
+    outline: none;
+}
+
+input[readonly] {
+    background-color: var(--warna5);
+}
+
+input[readonly]:focus,
+input[readonly]:hover {
+    border-color: var(--warna2);
+    background-color: var(--warna5);
+    box-shadow: none;
+    outline: none;
+    cursor: default;
+
+}
+
+
+/* Style dasar tombol "Pilih File" */
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--warna2);
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Hover, focus, active efek */
+input[type="file"]:hover::file-selector-button,
+input[type="file"]:focus::file-selector-button,
+input[type="file"]:active::file-selector-button,
+input[type="file"]:hover::-webkit-file-upload-button,
+input[type="file"]:focus::-webkit-file-upload-button,
+input[type="file"]:active::-webkit-file-upload-button {
+    background-color: var(--warna5) !important;
+    border-color: var(--warna2) !important;
+    color: var(--warna1) !important;
+    outline: none;
+    box-shadow: none;
+}
+
+.alas {
+    background-color: var(--warna0);
+    border-radius: 10px;
+    border: 4px solid var(--warna2);
+}
+
+@media (min-width: 768px) {
+    .main-content {
+        margin-left: 250px;
+    }
+}
+
+main .btn-add {
+    background-color: var(--warna2);
+    border: 4px solid var(--warna2);
+    color: var(--warna0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+main .btn-add:hover,
+main .btn-add:active,
+main .btn-add:focus {
+    background-color: var(--warna5);
+    border-color: var(--warna2);
+    color: var(--warna1);
+}
+
+
+main .btn-sm-1 {
+    background-color: var(--warna3);
+    border: 4px solid var(--warna3);
+    color: var(--warna0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+main .btn-sm-2 {
+    background-color: var(--warna4);
+    border: 4px solid var(--warna4);
+    color: var(--warna0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+main .btn-sm-1:hover,
+main .btn-sm-1:active,
+main .btn-sm-1:focus,
+main .btn-sm-2:hover,
+main .btn-sm-2:active,
+main .btn-sm-2:focus {
+    background-color: var(--warna5) !important;
+    border-color: var(--warna2) !important;
+    color: var(--warna1) !important;
+    outline: none;
+    box-shadow: none;
+}
+
+.aksi-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aksi-buttons a {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-box {
+    max-width: 400px;
+    width: 100%;
+}
+
+.video-frame {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    /* Membuat video berbentuk kotak */
+    object-fit: cover;
+    /* Supaya gambar tetap bagus */
+}
+
+.baris-terisi {
+    background-color: var(--warna4) !important;
+    /* hijau muda */
+}
+
+.baris-merah {
+    background-color: #ffcccc !important;
+    color: #990000 !important;
+}
+
+.equal-width-table th,
+.equal-width-table td {
+    width: 90px;
+    /* Atau sesuaikan misalnya 8%, 10%, dst */
+    word-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+    .video-box {
+        width: 80%;
+    }
+}

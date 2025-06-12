@@ -30,11 +30,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-6">
-                    <label>Penempatan</label>
-                    <input type="text" class="form-control" name="Penempatan"
-                        value="{{ old('Penempatan', $aset->Penempatan) }}" required>
-                </div>
+
             </div>
             <div class="row mb-3">
                 <div class="col-6">

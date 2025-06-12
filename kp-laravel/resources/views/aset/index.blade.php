@@ -45,7 +45,7 @@
         <table class="table table-bordered table-hover text-center align-middle">
             <thead class="align-middle">
                 <tr>
-                    <th colspan="8" class="text-end align-middle">Batas Penurunan Nilai (%)</th>
+                    <th colspan="7" class="text-end align-middle">Batas Penurunan Nilai (%)</th>
                     <th colspan="2">
                         <input id="batasPersenInput" type="number" value="5" min="1" max="100"
                             class="form-control form-control-sm text-center">
@@ -57,7 +57,6 @@
                     <th>ID Aset</th>
                     <th style="width: 20%; min-width: 100px">Nama Barang</th>
                     <th>Kategori</th>
-                    <th>Penempatan</th>
                     <th>Tanggal Masuk</th>
                     <th>Status</th>
                     <th>Kondisi</th>
@@ -74,7 +73,6 @@
                         <td>{{ $aset->Id_Aset }}</td>
                         <td>{{ $aset->Nama_Aset }}</td>
                         <td>{{ $aset->kategori->Nama_Kategori ?? '-' }}</td>
-                        <td>{{ $aset->Penempatan ?? '-' }}</td> <!-- TAMBAH DI SINI -->
                         <td>{{ optional(optional($aset->detailPenerimaan)->penerimaan)->Tanggal_Terima ?? '-' }}</td>
                         <td>{{ $aset->STATUS }}</td>
                         <td>{{ $aset->Kondisi }}</td>
@@ -87,18 +85,18 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="11" class="text-muted">Tidak ada data aset.</td> <!-- PERBAIKI colspan = 11 -->
+                        <td colspan="10" class="text-muted">Tidak ada data aset.</td>
                     </tr>
                 @endforelse
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="9" class="text-end">Total Nilai Aset Aktif</th> <!-- 9 karena tambah 1 kolom -->
+                    <th colspan="8" class="text-end">Total Nilai Aset Aktif</th> <!-- 9 karena tambah 1 kolom -->
                     <th colspan="1">Rp {{ number_format($total_nilai_aset_aktif, 0, ',', '.') }}</th>
                     <th></th>
                 </tr>
                 <tr>
-                    <th colspan="9" class="text-end">Total Keseluruhan Nilai Aset</th>
+                    <th colspan="8" class="text-end">Total Keseluruhan Nilai Aset</th>
                     <th colspan="1">Rp {{ number_format($total_nilai_aset_keseluruhan, 0, ',', '.') }}</th>
                     <th></th>
                 </tr>
@@ -177,7 +175,6 @@
 
                 const namaBarang = cells[2].textContent.toLowerCase();
                 const kategori = cells[3].textContent.toLowerCase();
-                const penempatan = cells[4].textContent.toLowerCase();
                 const kondisi = cells[6].textContent.toLowerCase();
 
                 const matchSearch = namaBarang.includes(searchValue);
@@ -190,8 +187,8 @@
                 rows[i].classList.remove("baris-merah");
 
                 // Ambil nilai awal dan sekarang (hilangkan Rp dan format)
-                const nilaiAwalText = cells[8].textContent.replace(/[^\d]/g, '');
-                const nilaiSekarangText = cells[9].textContent.replace(/[^\d]/g, '');
+                const nilaiAwalText = cells[7].textContent.replace(/[^\d]/g, '');
+                const nilaiSekarangText = cells[8].textContent.replace(/[^\d]/g, '');
 
 
                 const nilaiAwal = parseFloat(nilaiAwalText) || 0;

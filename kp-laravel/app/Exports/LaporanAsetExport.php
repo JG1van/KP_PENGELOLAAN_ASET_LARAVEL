@@ -38,7 +38,6 @@ class LaporanAsetExport implements FromCollection, WithHeadings, WithMapping, Sh
             'Kategori',
             // 'Tanggal Penerimaan',
             'Kondisi',
-            'Penempatan',
             'Nilai Awal',
         ], $tahunHeaders);
     }
@@ -55,7 +54,6 @@ class LaporanAsetExport implements FromCollection, WithHeadings, WithMapping, Sh
             $aset->kategori->Nama_Kategori ?? '-',
             // optional(optional($aset->detailPenerimaan)->penerimaan)->Tanggal_Terima ?? '-',
             $aset->Kondisi ?? '-',
-            $aset->Penempatan ?? '-',
             $formatRupiah($aset->Nilai_Aset_Awal),
         ];
 

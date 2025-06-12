@@ -20,9 +20,6 @@ return new class extends Migration {
             $table->decimal('Nilai_Aset_Awal', 12, 2);
             $table->enum('Kondisi', ['Baik', 'Rusak Sedang', 'Rusak Berat', 'Hilang', 'Diremajakan']);
 
-            // 👉 Kolom Penempatan ditambahkan di sini
-            $table->string('Penempatan', 100)->default('Gudang');
-
 
             $table->timestamps();
 

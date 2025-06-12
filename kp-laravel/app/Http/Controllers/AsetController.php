@@ -194,11 +194,10 @@ class AsetController extends Controller
             'Id_Kategori' => 'required|exists:kategori,Id_Kategori',
             'Kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'STATUS' => 'required|in:Aktif,Tidak Aktif',
-            'Penempatan' => 'required|string|max:100',
         ]);
 
         $aset = Aset::findOrFail($id);
-        $aset->update($request->only('Nama_Aset', 'Id_Kategori', 'Kondisi', 'STATUS', 'Penempatan'));
+        $aset->update($request->only('Nama_Aset', 'Id_Kategori', 'Kondisi', 'STATUS'));
 
         return redirect()->route('aset.index')->with('success', 'Data aset berhasil diperbarui.');
     }
@@ -227,11 +226,10 @@ class AsetController extends Controller
         $request->validate([
             'Nama_Aset' => 'required|string|max:100',
             'Id_Kategori' => 'required|exists:kategori,Id_Kategori',
-            'Penempatan' => 'required|string|max:100',
         ]);
 
         $aset = Aset::findOrFail($id);
-        $aset->update($request->only('Nama_Aset', 'Id_Kategori', 'Penempatan'));
+        $aset->update($request->only('Nama_Aset', 'Id_Kategori'));
 
         return back()->with('success', 'Data aset berhasil diperbarui.');
     }

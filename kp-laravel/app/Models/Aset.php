@@ -25,7 +25,6 @@ class Aset extends Model
         'Nilai_Saat_Ini',
         'Kondisi',
         'Tanggal_Masuk',
-        'Penempatan',
     ];
 
     public function kategori()

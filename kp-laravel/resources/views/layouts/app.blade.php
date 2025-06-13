@@ -20,7 +20,7 @@
         <!-- Sidebar Offcanvas (Mobile) -->
         <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebarMobile">
             <div class="offcanvas-header flex-column">
-                <div class="logo-container mb-2 w-20 text-center align-items-center">
+                <div class="logo-container mb-2 w-20 text-center">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo" />
                 </div>
                 <div class="d-flex justify-content-between w-100 align-items-center">
@@ -31,55 +31,63 @@
             </div>
 
             <div class="offcanvas-body p-0 text-start">
-                <ul class="list-unstyled ps-0">
+                <ul class="list-unstyled">
                     <li class="{{ request()->routeIs('dashboard*') ? 'active' : '' }}">
-                        <a href="{{ route('dashboard') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('dashboard') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-home me-2"></i>Dashboard
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('kategori.*') ? 'active' : '' }}">
-                        <a href="{{ route('kategori.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('kategori.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-th-large me-2"></i>Kategori
                         </a>
                     </li>
+                    <li class="{{ request()->routeIs('lokasi.*') ? 'active' : '' }}">
+                        <a href="{{ route('lokasi.index') }}" class="d-block py-2 px-3 text-white">
+                            <i class="fas fa-map-marker-alt me-2"></i>Lokasi
+                        </a>
+                    </li>
                     <li class="{{ request()->routeIs('aset.*') ? 'active' : '' }}">
-                        <a href="{{ route('aset.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('aset.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-box me-2"></i>Aset
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('penerimaan.*') ? 'active' : '' }}">
-                        <a href="{{ route('penerimaan.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('penerimaan.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-download me-2"></i>Penerimaan
                         </a>
                     </li>
+                    <li class="{{ request()->is('penempatan*') ? 'active' : '' }}">
+                        <a href="{{ route('penempatan.index') }}" class="d-block py-2 px-3 text-white">
+                            <i class="fas fa-boxes-stacked me-2"></i>Penempatan
+                        </a>
+                    </li>
                     <li class="{{ request()->routeIs('pengecekan.*') ? 'active' : '' }}">
-                        <a href="{{ route('pengecekan.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('pengecekan.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-qrcode me-2"></i>Pengecekan
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('penghapusan.*') ? 'active' : '' }}">
-                        <a href="{{ route('penghapusan.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('penghapusan.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-trash me-2"></i>Penghapusan
                         </a>
                     </li>
                     <li class="{{ request()->routeIs('pengaturan.*') ? 'active' : '' }}">
-                        <a href="{{ route('pengaturan.index') }}" class="text-white d-block py-2 px-3">
+                        <a href="{{ route('pengaturan.index') }}" class="d-block py-2 px-3 text-white">
                             <i class="fas fa-cog me-2"></i>Pengaturan
                         </a>
                     </li>
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST" class="mt-5 p-0">
+                    <li class="mt-5">
+                        <form action="{{ route('logout') }}" method="POST" class="p-0">
                             @csrf
                             <button type="submit"
-                                class="text-white d-block py-2 px-3 w-100 text-start bg-transparent border-0">
+                                class="d-block py-2 px-3 w-100 text-white text-start bg-transparent border-0">
                                 <i class="fas fa-sign-out-alt me-2"></i>Keluar
                             </button>
                         </form>
                     </li>
                 </ul>
-
             </div>
-
         </div>
 
         <!-- Sidebar Desktop -->
@@ -89,50 +97,62 @@
             </div>
             <ul class="list-unstyled">
                 <li class="{{ request()->routeIs('dashboard*') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('dashboard') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-home me-2"></i>Dashboard
                     </a>
                 </li>
                 <li class="{{ request()->routeIs('kategori.*') ? 'active' : '' }}">
-                    <a href="{{ route('kategori.index') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('kategori.index') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-th-large me-2"></i>Kategori
                     </a>
                 </li>
+                <li class="{{ request()->routeIs('lokasi.*') ? 'active' : '' }}">
+                    <a href="{{ route('lokasi.index') }}" class="text-white d-block py-2 px-3">
+                        <i class="fas fa-map-marker-alt me-2"></i>Lokasi
+                    </a>
+                </li>
+
                 <li class="{{ request()->routeIs('aset.*') ? 'active' : '' }}">
-                    <a href="{{ route('aset.index') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('aset.index') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-box me-2"></i>Aset
                     </a>
                 </li>
                 <li class="{{ request()->routeIs('penerimaan.*') ? 'active' : '' }}">
-                    <a href="{{ route('penerimaan.index') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('penerimaan.index') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-download me-2"></i>Penerimaan
                     </a>
                 </li>
+                <li class="{{ request()->is('penempatan*') ? 'active' : '' }}">
+                    <a href="{{ route('penempatan.index') }}" class="d-block py-2 px-3 text-white">
+                        <i class="fas fa-boxes-stacked me-2"></i>Penempatan
+                    </a>
+                </li>
                 <li class="{{ request()->routeIs('pengecekan.*') ? 'active' : '' }}">
-                    <a href="{{ route('pengecekan.index') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('pengecekan.index') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-qrcode me-2"></i>Pengecekan
                     </a>
                 </li>
                 <li class="{{ request()->routeIs('penghapusan.*') ? 'active' : '' }}">
-                    <a href="{{ route('penghapusan.index') }}" class="text-white d-block py-2 px-3">
+                    <a href="{{ route('penghapusan.index') }}" class="d-block py-2 px-3 text-white">
                         <i class="fas fa-trash me-2"></i>Penghapusan
                     </a>
                 </li>
-                <li class="{{ request()->routeIs('pengaturan.*') ? 'active' : '' }} ">
-                    <a href="{{ route('pengaturan.index') }}" class="text-white d-block py-2 px-3">
-                        <i class="fas fa-cog me-2 "></i>Pengaturan
+                <li class="{{ request()->routeIs('pengaturan.*') ? 'active' : '' }}">
+                    <a href="{{ route('pengaturan.index') }}" class="d-block py-2 px-3 text-white">
+                        <i class="fas fa-cog me-2"></i>Pengaturan
                     </a>
                 </li>
-                <li>
-                    <form action="{{ route('logout') }}" method="POST" class="mt-5 p-0">
+                <li class="mt-5">
+                    <form action="{{ route('logout') }}" method="POST" class="p-0">
                         @csrf
                         <button type="submit"
-                            class="text-white d-block py-2 px-3 w-100 text-start bg-transparent border-0">
+                            class="d-block py-2 px-3 w-100 text-white text-start bg-transparent border-0">
                             <i class="fas fa-sign-out-alt me-2"></i>Keluar
                         </button>
                     </form>
                 </li>
             </ul>
+
 
         </div>
 

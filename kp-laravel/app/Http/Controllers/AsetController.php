@@ -306,4 +306,10 @@ class AsetController extends Controller
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return substr(str_shuffle(str_repeat($characters, $length)), 0, $length);
     }
+    public function penempatanTerakhir()
+    {
+        return $this->hasOne(DetailPenempatan::class, 'Id_Aset', 'Id_Aset')
+            ->latestOfMany();
+    }
+
 }

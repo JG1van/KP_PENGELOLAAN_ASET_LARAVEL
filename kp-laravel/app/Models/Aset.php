@@ -73,4 +73,20 @@ class Aset extends Model
     {
         return $this->hasMany(DetailPengecekanAset::class, 'Id_Aset', 'Id_Aset');
     }
+    public function detailPenempatan()
+    {
+        return $this->hasMany(DetailPenempatan::class, 'Id_Aset', 'Id_Aset');
+    }
+    public function penempatanTerakhir()
+    {
+        return $this->hasOne(\App\Models\DetailPenempatan::class, 'Id_Aset', 'Id_Aset')
+            ->latestOfMany('Id_Detail_Penempatan');
+    }
+    // app/Models/Aset.php
+
+    public function penempatanDetail()
+    {
+        return $this->hasMany(\App\Models\DetailPenempatan::class, 'Id_Aset', 'Id_Aset');
+    }
+
 }

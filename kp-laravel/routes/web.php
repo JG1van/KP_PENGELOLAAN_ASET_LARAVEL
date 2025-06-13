@@ -5,17 +5,16 @@ use App\Http\Controllers\{
     DashboardController,
     KategoriController,
     AsetController,
-    ProfileController,
+
     PenerimaanAsetController,
     PengecekanAsetController,
     PenghapusanAsetController,
     PengaturanController,
     ProfilController,
-    Auth\AuthenticatedSessionController
+    Auth\AuthenticatedSessionController,
+    PenempatanController,
+    LokasiController,
 };
-use App\Exports\LaporanAktivitasExport;
-use Maatwebsite\Excel\Facades\Excel;
-
 // ===============================
 // 🌐 HALAMAN UTAMA (PUBLIC)
 // ===============================
@@ -36,15 +35,18 @@ Route::middleware(['auth', 'cek.status'])->group(function () {
     // 🔓 Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    // 👤 Profil (dari Laravel Breeze)
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
-        Route::patch('/', [ProfileController::class, 'update'])->name('update');
-        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-    });
+
 
     // 🗂️ Kategori
     Route::resource('kategori', KategoriController::class);
+
+
+    Route::prefix('lokasi')->name('lokasi.')->group(function () {
+        Route::get('/', [LokasiController::class, 'index'])->name('index');
+        Route::post('/', [LokasiController::class, 'store'])->name('store');
+        Route::put('/{id}', [LokasiController::class, 'update'])->name('update');
+        Route::delete('/{id}', [LokasiController::class, 'destroy'])->name('destroy');
+    });
 
     // 🏷️ Aset
     Route::resource('aset', AsetController::class);
@@ -60,6 +62,18 @@ Route::middleware(['auth', 'cek.status'])->group(function () {
         Route::delete('/{id}', [PenerimaanAsetController::class, 'destroy'])->name('destroy');
         Route::get('/{id}/qr', [PenerimaanAsetController::class, 'qr'])->name('qr');
         Route::get('/{id}/qr-pdf', [PenerimaanAsetController::class, 'exportQrPdf'])->name('qr.pdf');
+    });
+
+
+    Route::prefix('penempatan')->name('penempatan.')->group(function () {
+        Route::get('/', [PenempatanController::class, 'index'])->name('index');
+        Route::get('/create', [PenempatanController::class, 'create'])->name('create');
+        Route::post('/store', [PenempatanController::class, 'store'])->name('store');
+        Route::get('/penempatan/{id}', [PenempatanController::class, 'show'])->name('penempatan.show');
+        Route::get('/{id}', [PenempatanController::class, 'show'])->name('show');
+        Route::get('/{id}/export-excel', [PenempatanController::class, 'exportExcel'])
+            ->name('export-excel');
+
     });
 
     // ✅ Pengecekan Aset

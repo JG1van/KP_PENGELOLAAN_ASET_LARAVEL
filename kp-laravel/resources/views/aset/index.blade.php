@@ -194,9 +194,15 @@
                 const nilaiAwal = parseFloat(nilaiAwalText) || 0;
                 const nilaiSekarang = parseFloat(nilaiSekarangText) || 0;
 
-                if (nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <= batasPersen) {
+                if (
+                    (nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <= batasPersen) ||
+                    nilaiSekarang < 1000
+                ) {
                     rows[i].classList.add("baris-merah");
+                    rows[i].title = nilaiSekarang < 1000 ? "Nilai aset di bawah Rp 1.000" :
+                        "Nilai turun melebihi batas persen";
                 }
+
             }
         }
 

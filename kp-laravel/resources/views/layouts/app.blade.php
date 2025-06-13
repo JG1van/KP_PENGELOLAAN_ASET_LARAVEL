@@ -77,7 +77,7 @@
                             <i class="fas fa-cog me-2"></i>Pengaturan
                         </a>
                     </li>
-                    <li class="mt-5">
+                    <li class="mt-2">
                         <form action="{{ route('logout') }}" method="POST" class="p-0">
                             @csrf
                             <button type="submit"
@@ -142,7 +142,7 @@
                         <i class="fas fa-cog me-2"></i>Pengaturan
                     </a>
                 </li>
-                <li class="mt-5">
+                <li class="mt-2">
                     <form action="{{ route('logout') }}" method="POST" class="p-0">
                         @csrf
                         <button type="submit"

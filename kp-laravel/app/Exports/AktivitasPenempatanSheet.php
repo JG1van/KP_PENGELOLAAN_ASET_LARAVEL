@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\PenempatanAset;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -12,48 +13,69 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class PenempatanExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles, WithEvents
+class AktivitasPenempatanSheet implements
+    FromCollection,
+    WithTitle,
+    WithHeadings,
+    WithMapping,
+    ShouldAutoSize,
+    WithStyles,
+    WithEvents
 {
-    protected $penempatan;
+    protected $lokasiUnik = [];
 
-    public function __construct(PenempatanAset $penempatan)
+    public function __construct()
     {
-        $this->penempatan = $penempatan->load('detail.aset.kategori', 'detail.lokasi');
+        // Ambil semua lokasi unik dari detail penempatan
+        $this->lokasiUnik = \App\Models\DetailPenempatan::with('lokasi')
+            ->get()
+            ->pluck('lokasi.Nama_Lokasi')
+            ->unique()
+            ->filter()
+            ->values()
+            ->toArray();
     }
 
     public function collection()
     {
-        return $this->penempatan->detail;
+        return PenempatanAset::with('user', 'detail.lokasi')->orderBy('Tanggal_Penempatan')->get();
+    }
+
+    public function title(): string
+    {
+        return 'Penempatan';
     }
 
     public function headings(): array
     {
-        return [
-            'ID Aset',
-            'Nama Aset',
-            'Kategori',
-            'Lokasi Sebelumnya',
-            'Lokasi Sekarang',
-        ];
+        return array_merge(
+            ['ID Penempatan', 'Tanggal', 'Petugas', 'Jumlah Aset'],
+            $this->lokasiUnik
+        );
     }
 
-    public function map($item): array
+    public function map($penempatan): array
     {
-        // Lokasi sebelumnya: ambil dari DetailPenempatan sebelum ini
-        $lokasiSebelumnya = $item->aset
-            ->penempatanDetail()
-            ->where('Id_Penempatan', '<', $this->penempatan->Id_Penempatan)
-            ->orderByDesc('Id_Penempatan')
-            ->first();
+        $lokasiCount = array_fill_keys($this->lokasiUnik, 0);
 
-        return [
-            $item->aset->Id_Aset ?? '-',
-            $item->aset->Nama_Aset ?? '-',
-            $item->aset->kategori->Nama_Kategori ?? '-',
-            $lokasiSebelumnya->lokasi->Nama_Lokasi ?? 'Baru',
-            $item->lokasi->Nama_Lokasi ?? '-',
-        ];
+        foreach ($penempatan->detail as $d) {
+            $namaLokasi = $d->lokasi->Nama_Lokasi ?? 'Tidak Diketahui';
+            if (isset($lokasiCount[$namaLokasi])) {
+                $lokasiCount[$namaLokasi]++;
+            }
+        }
+
+        // Convert semua nilai jadi string agar Excel tidak menghilangkan angka 0
+        $lokasiCountString = array_map(fn($val) => (string) $val, $lokasiCount);
+
+        return array_merge([
+            $penempatan->Id_Penempatan,
+            $penempatan->Tanggal_Penempatan,
+            $penempatan->user->name ?? '-',
+            (string) $penempatan->detail->count(),
+        ], $lokasiCountString);
     }
+
 
     public function styles(Worksheet $sheet)
     {
@@ -69,11 +91,8 @@ class PenempatanExport implements FromCollection, WithHeadings, WithMapping, Sho
                 $sheet = $event->sheet->getDelegate();
 
                 $sheet->insertNewRowBefore(1, 2);
-
-                $sheet->setCellValue('A1', 'Detail Penempatan Aset');
-                $sheet->setCellValue('A2', 'ID: ' . $this->penempatan->Id_Penempatan .
-                    ' | Tanggal: ' . \Carbon\Carbon::parse($this->penempatan->Tanggal_Penempatan)->format('d M Y') .
-                    ' | Petugas: ' . ($this->penempatan->user->name ?? 'Unknown'));
+                $sheet->setCellValue('A1', 'ASET SLB PAMARDI PUTRA');
+                $sheet->setCellValue('A2', 'Tahun ' . date('Y'));
 
                 $colCount = count($this->headings());
                 $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount);

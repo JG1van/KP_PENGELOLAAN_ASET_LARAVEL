@@ -23,7 +23,11 @@ class LaporanAsetExport implements FromCollection, WithHeadings, WithMapping, Sh
 
     public function collection()
     {
-        return Aset::with(['kategori', 'penurunans', 'detailPenerimaan.penerimaan'])->get();
+        return Aset::with([
+            'kategori',
+            'penurunans',
+            'lokasiTerakhir',
+        ])->get();
     }
 
     public function headings(): array
@@ -36,6 +40,7 @@ class LaporanAsetExport implements FromCollection, WithHeadings, WithMapping, Sh
             'ID Aset',
             'Nama Aset',
             'Kategori',
+            'Lokasi',
             // 'Tanggal Penerimaan',
             'Kondisi',
             'Nilai Awal',
@@ -47,11 +52,13 @@ class LaporanAsetExport implements FromCollection, WithHeadings, WithMapping, Sh
         $formatRupiah = function ($nilai) {
             return is_numeric($nilai) ? 'Rp ' . number_format($nilai, 0, ',', '.') : '-';
         };
+        $lokasi = optional($aset->lokasiTerakhir)->Nama_Lokasi ?? '-';
 
         $row = [
             $aset->Id_Aset,
             $aset->Nama_Aset,
             $aset->kategori->Nama_Kategori ?? '-',
+            $lokasi,
             // optional(optional($aset->detailPenerimaan)->penerimaan)->Tanggal_Terima ?? '-',
             $aset->Kondisi ?? '-',
             $formatRupiah($aset->Nilai_Aset_Awal),

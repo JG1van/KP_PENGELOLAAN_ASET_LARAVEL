@@ -41,7 +41,7 @@ class PengecekanAsetController extends Controller
         DB::beginTransaction();
         try {
             $tahun = now()->format('y'); // Contoh: 25 (tahun 2025)
-            $prefix = '2P' . $tahun;
+            $prefix = '3P' . $tahun;
 
             // Cari ID pengecekan terakhir dengan prefix yang sama
             $lastPengecekan = PengecekanAset::where('Id_Pengecekan', 'like', "$prefix%")
@@ -69,7 +69,7 @@ class PengecekanAsetController extends Controller
                 $kondisi = $request->kondisi[$aset->Id_Aset] ?? 'hilang';
 
                 $lastDetailNumber++;
-                $idDetail = '2D' . str_pad($lastDetailNumber, 4, '0', STR_PAD_LEFT);
+                $idDetail = '3D' . str_pad($lastDetailNumber, 4, '0', STR_PAD_LEFT);
 
                 DetailPengecekanAset::create([
                     'Id_Detail_Pengecekan' => $idDetail,

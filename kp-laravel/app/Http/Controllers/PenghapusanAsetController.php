@@ -45,7 +45,7 @@ class PenghapusanAsetController extends Controller
         try {
             // Generate ID Penghapusan terlebih dahulu
             $tahun = now()->format('y');
-            $prefix = '3P' . $tahun;
+            $prefix = '4P' . $tahun;
             $last = PenghapusanAset::where('Id_Penghapusan', 'like', "$prefix%")
                 ->orderByDesc('Id_Penghapusan')->first();
             $noUrut = $last ? intval(substr($last->Id_Penghapusan, 4)) + 1 : 1;
@@ -80,7 +80,7 @@ class PenghapusanAsetController extends Controller
             $detailUrut = $lastDetail ? intval(substr($lastDetail->Id_Detail_Penghapusan, 2)) + 1 : 1;
 
             foreach ($request->aset_terpilih as $idAset) {
-                $idDetail = '3D' . str_pad($detailUrut++, 4, '0', STR_PAD_LEFT);
+                $idDetail = '4D' . str_pad($detailUrut++, 4, '0', STR_PAD_LEFT);
 
                 DetailPenghapusanAset::create([
                     'Id_Detail_Penghapusan' => $idDetail,

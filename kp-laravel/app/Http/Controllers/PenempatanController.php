@@ -15,7 +15,7 @@ class PenempatanController extends Controller
     public function index()
     {
         $data = PenempatanAset::with(['user', 'detail.lokasi'])
-            ->orderByDesc('Tanggal_Penempatan')
+            ->orderBy('Id_Penempatan', 'asc')
             ->get();
 
         return view('penempatan.index', compact('data'));

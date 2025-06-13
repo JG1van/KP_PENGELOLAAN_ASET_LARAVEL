@@ -31,4 +31,9 @@ class DetailPenerimaanAset extends Model
     {
         return $this->belongsTo(Aset::class, 'Id_Aset', 'Id_Aset');
     }
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'Id_Lokasi', 'Id_Lokasi');
+    }
+
 }

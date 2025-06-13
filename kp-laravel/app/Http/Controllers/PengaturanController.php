@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Aset;
 use App\Models\PengecekanAset;
 use App\Models\PenghapusanAset;
+use App\Exports\PenempatanSheet;
 use App\Exports\LaporanAsetExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanAktivitasExport;

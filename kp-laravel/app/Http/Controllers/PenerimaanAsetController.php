@@ -80,11 +80,15 @@ class PenerimaanAsetController extends Controller
                     return back()->with('error', 'Aset tidak dapat dihapus karena sudah melewati proses pengecekan.');
                 }
 
+                if ($aset->detailPenempatan()->exists()) {
+                    return back()->with('error', 'Aset tidak dapat dihapus karena sudah memiliki riwayat penempatan.');
+                }
+
                 $aset->delete();
-                $detail->delete(); // penting agar tidak orphan
+                $detail->delete(); // hapus detail_penerimaan
             }
 
-            $penerimaan->delete();
+            $penerimaan->delete(); // hapus data utama
             DB::commit();
 
             return redirect()->route('penerimaan.index')->with('success', 'Penerimaan berhasil dihapus.');
@@ -93,6 +97,7 @@ class PenerimaanAsetController extends Controller
             return back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }
     }
+
 
 
     public function qr($id)
@@ -112,7 +117,6 @@ class PenerimaanAsetController extends Controller
             $filename = 'qrcodes/' . $aset->Id_Aset . '.png';
 
             if (!Storage::disk('public')->exists($filename)) {
-                // ✅ Perbaikan: hasil QR harus disimpan ke variabel
                 $qrImage = QrCode::format('svg')->size(200)->generate($aset->Id_Aset);
 
                 Storage::disk('public')->put($filename, $qrImage);

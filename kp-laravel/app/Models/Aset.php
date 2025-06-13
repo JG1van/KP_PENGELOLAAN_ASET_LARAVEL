@@ -88,5 +88,17 @@ class Aset extends Model
     {
         return $this->hasMany(\App\Models\DetailPenempatan::class, 'Id_Aset', 'Id_Aset');
     }
+    public function lokasiTerakhir()
+    {
+        return $this->hasOneThrough(
+            \App\Models\Lokasi::class,
+            \App\Models\DetailPenempatan::class,
+            'Id_Aset',      // FK di DetailPenempatan (menuju aset)
+            'Id_Lokasi',    // FK di Lokasi (menuju lokasi)
+            'Id_Aset',      // PK di Aset
+            'Id_Lokasi'     // FK di DetailPenempatan
+        )->orderByDesc('Id_Detail_Penempatan'); // <- ganti jika `latestOfMany()` tidak tersedia
+    }
+
 
 }

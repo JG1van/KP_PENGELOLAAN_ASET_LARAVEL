@@ -68,7 +68,7 @@
             <h6 class="mb-3">Jumlah Aset per Tahun</h6>
             <div style="max-height: 260px; overflow-y: auto;">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover text-center align-middle mb-0">
+                    <table class="table table-bordered w-100 table-hover text-center align-middle mb-0">
                         <thead class="align-middle">
                             <tr>
                                 <th>Tahun</th>

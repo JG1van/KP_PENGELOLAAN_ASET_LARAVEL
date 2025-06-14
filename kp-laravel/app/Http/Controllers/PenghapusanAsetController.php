@@ -8,12 +8,12 @@ use App\Models\Aset;
 use App\Models\PenghapusanAset;
 use App\Models\DetailPenghapusanAset;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+
 class PenghapusanAsetController extends Controller
 {
     public function index()
     {
-        // Mengambil data dengan relasi detail dan user, urut berdasarkan Id_Penghapusan desc
-        $data = PenghapusanAset::with(['detail', 'user'])
+        $data = PenghapusanAset::with(['detail.aset', 'user'])
             ->orderByDesc('Id_Penghapusan')
             ->get();
 
@@ -22,7 +22,7 @@ class PenghapusanAsetController extends Controller
 
     public function create()
     {
-        $asets = Aset::where('STATUS', 'aktif')
+        $asets = Aset::where('STATUS', 'Aktif')
             ->whereIn('Kondisi', ['rusak berat', 'hilang', 'diremajakan'])
             ->get();
 
@@ -34,7 +34,7 @@ class PenghapusanAsetController extends Controller
         $request->validate([
             'Tanggal_Hapus' => 'required|date',
             'Dokumen_Penghapusan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'aset_terpilih' => 'required|array|min:1'
+            'aset_terpilih' => 'required|array|min:1',
         ]);
 
         if (!auth()->check()) {
@@ -43,49 +43,45 @@ class PenghapusanAsetController extends Controller
 
         DB::beginTransaction();
         try {
-            // Generate ID Penghapusan terlebih dahulu
-            $tahun = now()->format('y');
+            // Buat ID Penghapusan: 4P + 2 digit tahun + 2 digit urut
+            $tahun = date('y', strtotime($request->Tanggal_Hapus));
             $prefix = '4P' . $tahun;
+
             $last = PenghapusanAset::where('Id_Penghapusan', 'like', "$prefix%")
-                ->orderByDesc('Id_Penghapusan')->first();
+                ->orderByDesc('Id_Penghapusan')->lockForUpdate()->first();
+
             $noUrut = $last ? intval(substr($last->Id_Penghapusan, 4)) + 1 : 1;
             $idPenghapusan = $prefix . str_pad($noUrut, 2, '0', STR_PAD_LEFT);
 
-            // Upload file ke Cloudinary
+            // Upload file dokumen ke Cloudinary
             $file = $request->file('Dokumen_Penghapusan');
-            $tanggalFormat = date('Y-m-d', strtotime($request->Tanggal_Hapus));
-            $publicId = "dokumen_penghapusan_{$tanggalFormat}_{$idPenghapusan}";
+            $publicId = 'Dokumen_Penghapusan_' . $request->Tanggal_Hapus . '_' . $idPenghapusan;
+            $upload = Cloudinary::upload($file->getRealPath(), [
+                'folder' => 'dokumen_Sekolah/Dokumen_Penghapusan',
+                'public_id' => $publicId,
+                'resource_type' => 'auto',
+            ]);
+            $fileUrl = $upload->getSecurePath();
 
-            $uploaded = Cloudinary::upload(
-                $file->getRealPath(),
-                [
-                    'folder' => 'dokumen_Sekolah/dokumen_penghapusan',
-                    'public_id' => $publicId,
-                    'resource_type' => 'auto'
-                ]
-            );
-
-            $fileUrl = $uploaded->getSecurePath();
-
-            // Simpan penghapusan
+            // Simpan data penghapusan
             $penghapusan = PenghapusanAset::create([
                 'Id_Penghapusan' => $idPenghapusan,
                 'Tanggal_Hapus' => $request->Tanggal_Hapus,
-                'Dokumen_Penghapusan' => $fileUrl, // disimpan sebagai URL
+                'Dokumen_Penghapusan' => $fileUrl,
                 'user_id' => auth()->id(),
             ]);
 
-            // Detail penghapusan
-            $lastDetail = DetailPenghapusanAset::orderByDesc('Id_Detail_Penghapusan')->first();
-            $detailUrut = $lastDetail ? intval(substr($lastDetail->Id_Detail_Penghapusan, 2)) + 1 : 1;
+            // Detail penghapusan: 3D0001, dst
+            $lastDetail = DetailPenghapusanAset::orderByDesc('Id_Detail_Penghapusan')->lockForUpdate()->first();
+            $urutDetail = $lastDetail ? intval(substr($lastDetail->Id_Detail_Penghapusan, 2)) + 1 : 1;
 
             foreach ($request->aset_terpilih as $idAset) {
-                $idDetail = '4D' . str_pad($detailUrut++, 4, '0', STR_PAD_LEFT);
+                $idDetail = '4D' . str_pad($urutDetail++, 4, '0', STR_PAD_LEFT);
 
                 DetailPenghapusanAset::create([
                     'Id_Detail_Penghapusan' => $idDetail,
                     'Id_Penghapusan' => $idPenghapusan,
-                    'Id_Aset' => $idAset
+                    'Id_Aset' => $idAset,
                 ]);
 
                 Aset::where('Id_Aset', $idAset)->update(['STATUS' => 'Tidak Aktif']);
@@ -99,31 +95,25 @@ class PenghapusanAsetController extends Controller
         }
     }
 
-
     public function show($id)
     {
         $penghapusan = PenghapusanAset::with(['detail.aset.kategori', 'user'])->findOrFail($id);
+
         $files = [];
-
-        if ($penghapusan->Dokumen_Penghapusan) {
-            $dokumen = $penghapusan->Dokumen_Penghapusan;
-
-            // Jika berupa JSON array dari Cloudinary
-            if (is_array(json_decode($dokumen, true))) {
-                $files = json_decode($dokumen, true);
-            } else {
-                // Jika berupa URL tunggal
-                if (filter_var($dokumen, FILTER_VALIDATE_URL)) {
-                    $files[] = [
-                        'secure_url' => $dokumen,
-                        'public_id' => basename($dokumen),
-                    ];
-                }
+        $dokumen = $penghapusan->Dokumen_Penghapusan;
+        if ($dokumen) {
+            // JSON atau URL tunggal
+            $decoded = json_decode($dokumen, true);
+            if (is_array($decoded)) {
+                $files = $decoded;
+            } elseif (filter_var($dokumen, FILTER_VALIDATE_URL)) {
+                $files[] = [
+                    'secure_url' => $dokumen,
+                    'public_id' => basename($dokumen),
+                ];
             }
         }
 
         return view('penghapusan.show', compact('penghapusan', 'files'));
     }
-
-
 }

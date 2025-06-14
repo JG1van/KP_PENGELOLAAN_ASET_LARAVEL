@@ -27,7 +27,7 @@
 
         <h5>Daftar Barang</h5>
         <div class="table-responsive mb-2">
-            <table class="table table-bordered table-hover text-center align-middle" id="tabelBarang">
+            <table class="table table-bordered w-100 table-hover text-center align-middle" id="tabelBarang">
                 <thead>
                     <tr>
                         <th>No</th>

@@ -44,13 +44,13 @@
         <div class="mb-3">
             <p class="text-muted">
                 Aset yang ditampilkan adalah aset berstatus aktif dengan kondisi
-                <strong>rusak berat</strong>, <strong>hilang</strong> atau <strong>diremajakan</strong>.
+                <strong>Rusak Berat</strong>, <strong>Hilang</strong> atau <strong>Diremajakan</strong>.
             </p>
         </div>
 
         @if ($asets->count())
             <div class="table-responsive mb-4">
-                <table class="table table-bordered table-hover text-center align-middle">
+                <table class="table table-bordered w-100 table-hover text-center align-middle">
                     <thead>
                         <tr>
                             <th>No</th>

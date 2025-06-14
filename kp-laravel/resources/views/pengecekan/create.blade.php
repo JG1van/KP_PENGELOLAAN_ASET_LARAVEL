@@ -56,7 +56,7 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center align-middle">
+            <table class="table table-bordered w-100 table-hover text-center align-middle">
                 <thead>
                     <tr>
                         <th colspan="6" class="text-end align-middle">Batas Penurunan Nilai (%)</th>

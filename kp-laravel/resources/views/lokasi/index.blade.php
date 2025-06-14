@@ -38,7 +38,7 @@
 
     {{-- Tabel Lokasi --}}
     <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle" id="lokasiTable">
+        <table class="table table-bordered w-100 table-hover text-center align-middle" id="lokasiTable">
             <thead>
                 <tr>
                     <th>No</th>

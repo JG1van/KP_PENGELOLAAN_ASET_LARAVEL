@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Penempatan')
-@section('page_title', 'Daftar Aktivitas Penempatan')
+@section('title', 'Aktivitas Penempatan Aset')
+@section('page_title', 'Aktivitas Penempatan Aset')
 
 @section('content')
 
@@ -21,7 +21,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle">
+        <table class="table table-bordered w-100 table-hover text-center align-middle">
             <thead>
                 <tr>
                     <th style="width: 5%;">No</th>

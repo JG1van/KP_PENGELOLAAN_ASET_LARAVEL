@@ -29,7 +29,7 @@
     @foreach ($lokasi as $lok)
         <h5 class="mt-4">Lokasi: {{ $lok->Nama_Lokasi }}</h5>
         <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center align-middle">
+            <table class="table table-bordered w-100 table-hover text-center align-middle">
                 <thead class="align-middle">
                     <tr>
                         <th style="width: 5%;">No</th>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Pengaktifan Aset')
-@section('page_title', 'Daftar Aset Tidak Aktif')
+@section('page_title', 'Pengaktifan Aset')
 
 @section('content')
     {{-- Filter --}}
@@ -13,7 +13,7 @@
 
     {{-- Tabel Aset Tidak Aktif --}}
     <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle" id="tabelAset">
+        <table class="table table-bordered w-100 table-hover text-center align-middle" id="tabelAset">
             <thead class="align-middle">
                 <tr>
                     <th>No</th>

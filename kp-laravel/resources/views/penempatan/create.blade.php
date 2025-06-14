@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Penempatan Aset')
-@section('page_title', 'Penempatan Aset')
+@section('title', 'Tambah Penempatan Aset')
+@section('page_title', 'Tambah Penempatan Aset')
 
 @section('content')
     <form action="{{ route('penempatan.store') }}" method="POST" id="formPenempatan">

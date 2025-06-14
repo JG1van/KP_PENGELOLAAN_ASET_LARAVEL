@@ -14,6 +14,7 @@
         "cloudinary-labs/cloudinary-laravel": "^2.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
+        "laravel/octane": "^1.5",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "maatwebsite/excel": "^3.1",

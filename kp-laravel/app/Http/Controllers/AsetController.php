@@ -15,10 +15,18 @@ class AsetController extends Controller
 {
     public function index()
     {
-        $data = Aset::with(['kategori', 'detailPenerimaan.penerimaan', 'PenurunanTerbaru'])->get();
-        $kategoriList = Kategori::all();
+        $data = Aset::with([
+            'kategori:Id_Kategori,Nama_Kategori',
+            'detailPenerimaan.penerimaan:Id_Penerimaan,Tanggal_Terima',
+            'PenurunanTerbaru:Id_Penurunan,Id_Aset,Nilai_Saat_Ini'
+        ])->get();
 
-        $total_nilai_aset_aktif = $data->where('STATUS', 'Aktif')->sum(fn($aset) => $aset->PenurunanTerbaru->Nilai_Saat_Ini ?? 0);
+        $kategoriList = cache()->remember('kategori_list', 60, fn() => Kategori::all());
+
+        $total_nilai_aset_aktif = $data->reduce(function ($total, $aset) {
+            return $total + (($aset->STATUS === 'Aktif' && $aset->PenurunanTerbaru) ? $aset->PenurunanTerbaru->Nilai_Saat_Ini : 0);
+        }, 0);
+
         $total_nilai_aset_keseluruhan = $data->sum(fn($aset) => $aset->PenurunanTerbaru->Nilai_Saat_Ini ?? 0);
 
         return view('aset.index', compact(
@@ -27,14 +35,14 @@ class AsetController extends Controller
             'total_nilai_aset_aktif',
             'total_nilai_aset_keseluruhan'
         ));
-
     }
 
     public function create()
     {
-        $kategori = Kategori::all();
+        $kategori = cache()->remember('kategori_list', 60, fn() => Kategori::all());
         return view('aset.create', compact('kategori'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -46,45 +54,31 @@ class AsetController extends Controller
         ]);
 
         DB::beginTransaction();
-
         try {
             $tanggal = $request->tanggal_penerimaan;
             $tahun = date('Y', strtotime($tanggal));
             $prefix = '1P' . date('y', strtotime($tanggal));
 
-            // ID Penerimaan unik
             $last = PenerimaanAset::where('Id_Penerimaan', 'like', "$prefix%")
-                ->orderByDesc('Id_Penerimaan')
-                ->lockForUpdate()
-                ->first();
+                ->orderByDesc('Id_Penerimaan')->lockForUpdate()->first();
 
-            $noUrut = $last ? intval(substr($last->Id_Penerimaan, 4)) + 1 : 1;
-            $idPenerimaan = $prefix . str_pad($noUrut, 2, '0', STR_PAD_LEFT);
+            $idPenerimaan = $prefix . str_pad($last ? intval(substr($last->Id_Penerimaan, 4)) + 1 : 1, 2, '0', STR_PAD_LEFT);
 
-            // Upload dokumen ke Cloudinary
             $filename = null;
             if ($request->hasFile('dokumen')) {
                 $file = $request->file('dokumen');
-                $tanggalFormat = date('Y-m-d', strtotime($tanggal));
-                $publicId = "Dokumen_Penerimaan_{$tanggalFormat}_{$idPenerimaan}";
-
-                $uploaded = Cloudinary::upload(
-                    $file->getRealPath(),
-                    [
-                        'folder' => 'dokumen_Sekolah/Dokumen_Penerimaan',
-                        'public_id' => $publicId,
-                        'resource_type' => 'auto'
-                    ]
-                );
-
+                $publicId = "Dokumen_Penerimaan_" . date('Y-m-d', strtotime($tanggal)) . "_$idPenerimaan";
+                $uploaded = Cloudinary::upload($file->getRealPath(), [
+                    'folder' => 'dokumen_Sekolah/Dokumen_Penerimaan',
+                    'public_id' => $publicId,
+                    'resource_type' => 'auto'
+                ]);
                 $filename = $uploaded->getSecurePath();
             }
 
-            // Decode dan validasi barang
             $items = json_decode($request->barang_json);
-            if (!is_array($items) || empty($items)) {
+            if (!is_array($items) || empty($items))
                 throw new \Exception("Data barang tidak valid.");
-            }
 
             foreach ($items as $item) {
                 if (
@@ -96,7 +90,6 @@ class AsetController extends Controller
                 }
             }
 
-            // Buat penerimaan
             $penerimaan = PenerimaanAset::create([
                 'Id_Penerimaan' => $idPenerimaan,
                 'Tanggal_Terima' => $tanggal,
@@ -105,14 +98,12 @@ class AsetController extends Controller
                 'User_Id' => auth()->id(),
             ]);
 
-            // Ambil ID terakhir
-            $lastAset = Aset::orderBy('Id_Aset', 'desc')->lockForUpdate()->first();
-            $asetUrut = $lastAset ? intval(substr($lastAset->Id_Aset, 1)) : 0;
+            $asetUrut = optional(Aset::select('Id_Aset')->orderByDesc('Id_Aset')->lockForUpdate()->first())->Id_Aset;
+            $asetUrut = $asetUrut ? intval(substr($asetUrut, 1)) : 0;
 
-            $lastDetail = DetailPenerimaanAset::orderBy('Id_Detail_Penerimaan', 'desc')->lockForUpdate()->first();
-            $detailUrut = $lastDetail ? intval(substr($lastDetail->Id_Detail_Penerimaan, 2)) + 1 : 1;
+            $detailUrut = optional(DetailPenerimaanAset::select('Id_Detail_Penerimaan')->orderByDesc('Id_Detail_Penerimaan')->lockForUpdate()->first())->Id_Detail_Penerimaan;
+            $detailUrut = $detailUrut ? intval(substr($detailUrut, 2)) + 1 : 1;
 
-            // Siapkan keterangan
             $index = 1;
             $totalAsetBaru = 0;
             $keteranganLines = [
@@ -120,7 +111,7 @@ class AsetController extends Controller
                 "Nama: {$request->nama}",
                 "Telepon: {$request->telepon}",
                 "",
-                "Daftar Barang:",
+                "Daftar Barang:"
             ];
 
             foreach ($items as $item) {
@@ -140,6 +131,7 @@ class AsetController extends Controller
 
                 for ($i = 0; $i < $jumlah; $i++) {
                     $idAset = 'A' . str_pad(++$asetUrut, 4, '0', STR_PAD_LEFT);
+                    $idDetail = '1D' . str_pad($detailUrut++, 4, '0', STR_PAD_LEFT);
 
                     Aset::create([
                         'Id_Aset' => $idAset,
@@ -150,8 +142,6 @@ class AsetController extends Controller
                         'Kondisi' => 'Baik',
                         'STATUS' => 'Aktif',
                     ]);
-
-                    $idDetail = '1D' . str_pad($detailUrut++, 4, '0', STR_PAD_LEFT);
 
                     DetailPenerimaanAset::create([
                         'Id_Detail_Penerimaan' => $idDetail,
@@ -171,9 +161,8 @@ class AsetController extends Controller
             }
 
             $penerimaan->update(['Keterangan' => implode("\n", $keteranganLines)]);
-
             DB::commit();
-            return redirect()->route('aset.index')->with('success', "Data berhasil disimpan. Anda menambahkan $totalAsetBaru aset.");
+            return redirect()->route('aset.index')->with('success', "Berhasil menambahkan $totalAsetBaru aset.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menyimpan: ' . $e->getMessage());
@@ -183,7 +172,7 @@ class AsetController extends Controller
     public function edit($id)
     {
         $aset = Aset::findOrFail($id);
-        $kategori = Kategori::all();
+        $kategori = cache()->remember('kategori_list', 60, fn() => Kategori::all());
         return view('aset.edit', compact('aset', 'kategori'));
     }
 
@@ -199,16 +188,14 @@ class AsetController extends Controller
         $aset = Aset::findOrFail($id);
         $aset->update($request->only('Nama_Aset', 'Id_Kategori', 'Kondisi', 'STATUS'));
 
-        return redirect()->route('aset.index')->with('success', 'Data aset berhasil diperbarui.');
+        return redirect()->route('aset.index')->with('success', 'Aset berhasil diperbarui.');
     }
-
 
     public function destroy($id)
     {
         try {
-            $aset = Aset::findOrFail($id);
-            $aset->delete();
-            return back()->with('success', 'Data aset berhasil dihapus.');
+            Aset::findOrFail($id)->delete();
+            return back()->with('success', 'Aset berhasil dihapus.');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }
@@ -217,7 +204,7 @@ class AsetController extends Controller
     public function show($id)
     {
         $aset = Aset::with(['penurunans', 'kategori', 'detailPenerimaan.penerimaan'])->findOrFail($id);
-        $kategori = Kategori::all();
+        $kategori = cache()->remember('kategori_list', 60, fn() => Kategori::all());
         return view('aset.show', compact('aset', 'kategori'));
     }
 
@@ -228,12 +215,9 @@ class AsetController extends Controller
             'Id_Kategori' => 'required|exists:kategori,Id_Kategori',
         ]);
 
-        $aset = Aset::findOrFail($id);
-        $aset->update($request->only('Nama_Aset', 'Id_Kategori'));
-
-        return back()->with('success', 'Data aset berhasil diperbarui.');
+        Aset::findOrFail($id)->update($request->only('Nama_Aset', 'Id_Kategori'));
+        return back()->with('success', 'Detail aset berhasil diperbarui.');
     }
-
 
     public function prosesPenurunan(Request $request)
     {
@@ -242,12 +226,10 @@ class AsetController extends Controller
             'persen' => 'required|numeric|min:1|max:100',
         ]);
 
-        $persen = $request->persen;
-        $tahunSekarang = date('Y');
-
         DB::beginTransaction();
         try {
-            $asets = Aset::with(['penurunans', 'PenurunanTerbaru'])->get();
+            $asets = Aset::with(['penurunans:Id_Penurunan,Id_Aset,Tahun', 'PenurunanTerbaru:Id_Penurunan,Id_Aset,Nilai_Saat_Ini'])->get();
+            $tahunSekarang = date('Y');
             $jumlahDiproses = 0;
 
             foreach ($asets as $aset) {
@@ -262,9 +244,8 @@ class AsetController extends Controller
                     if ($aset->penurunans->contains('Tahun', $tahun))
                         continue;
 
-                    $nilaiSaatIni = round($nilaiSaatIni - ($nilaiSaatIni * ($persen / 100)));
-                    if ($nilaiSaatIni < 0)
-                        $nilaiSaatIni = 0;
+                    $nilaiSaatIni -= $nilaiSaatIni * ($request->persen / 100);
+                    $nilaiSaatIni = max(round($nilaiSaatIni), 0);
 
                     PenurunanAset::create([
                         'Id_Penurunan' => $this->generateUniqueIdPenurunan(),
@@ -274,7 +255,6 @@ class AsetController extends Controller
                     ]);
 
                     $sudahDiproses = true;
-
                     if ($nilaiSaatIni === 0)
                         break;
                 }
@@ -286,9 +266,10 @@ class AsetController extends Controller
             DB::commit();
             $totalAset = $asets->count();
             return back()->with('success', "Penurunan nilai berhasil. Diproses: $jumlahDiproses dari $totalAset aset.");
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal memproses penurunan: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memproses: ' . $e->getMessage());
         }
     }
 
@@ -297,19 +278,12 @@ class AsetController extends Controller
         do {
             $id = $this->generateRandomId(4);
         } while (PenurunanAset::where('Id_Penurunan', $id)->exists());
-
         return $id;
     }
 
     private function generateRandomId($length = 4)
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return substr(str_shuffle(str_repeat($characters, $length)), 0, $length);
+        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return substr(str_shuffle(str_repeat($chars, $length)), 0, $length);
     }
-    public function penempatanTerakhir()
-    {
-        return $this->hasOne(DetailPenempatan::class, 'Id_Aset', 'Id_Aset')
-            ->latestOfMany();
-    }
-
 }

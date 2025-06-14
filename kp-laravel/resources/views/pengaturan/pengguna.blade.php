@@ -12,7 +12,7 @@
 
     <div class="alas p-3">
         <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center align-middle equal-width-table">
+            <table class="table table-bordered w-100 table-hover text-center align-middle equal-width-table">
                 <thead class="align-middle">
                     <tr>
                         <th>No</th>

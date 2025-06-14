@@ -38,7 +38,7 @@
 
     {{-- Tabel Kategori --}}
     <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle" id="kategoriTable">
+        <table class="table table-bordered w-100 table-hover text-center align-middle" id="kategoriTable">
             <thead>
                 <tr>
                     <th>No</th>

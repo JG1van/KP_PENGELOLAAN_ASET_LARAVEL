@@ -218,13 +218,50 @@ main .card {
 
 
 
-table {
+.table-responsive {
     width: 100%;
-    border-collapse: collapse;
-    border-radius: 10px;
     overflow: hidden;
-
+    /* Tidak bisa digeser */
+    border-radius: 10px;
+    background-color: #fff;
 }
+
+.table-responsive table {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #8b4513;
+}
+
+.table-responsive th,
+.table-responsive td {
+    padding: 10px 12px;
+    border: 1px solid #8b4513;
+    text-align: center;
+    word-wrap: break-word;
+    /* Untuk memaksa pemisahan kata */
+    white-space: normal;
+    /* Hindari pemaksaan panjang baris */
+    overflow-wrap: break-word;
+}
+
+/* Sudut atas membulat */
+.table-responsive thead th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table-responsive thead th:last-child {
+    border-top-right-radius: 10px;
+}
+
+/* Hover efek */
+.table-responsive tbody tr:hover {
+    background-color: #fff3e6;
+}
+
 
 thead {
     background-color: var(--warna2);

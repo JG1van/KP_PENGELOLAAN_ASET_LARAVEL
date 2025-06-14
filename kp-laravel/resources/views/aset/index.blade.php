@@ -41,8 +41,8 @@
 
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle">
+    <div class="table-responsive ">
+        <table id="asetTable" class="table table-bordered w-100 table-hover text-center align-middle">
             <thead class="align-middle">
                 <tr>
                     <th colspan="7" class="text-end align-middle">Batas Penurunan Nilai (%)</th>
@@ -149,7 +149,210 @@
 
 
 @section('js')
+    <style>
+        /* Reset Dropdown & Search Input */
+        #asetTable_wrapper .dataTables_length select,
+        .dataTables_length select,
+        .dataTables_filter input {
+            all: unset;
+            display: inline-block;
+            padding: 4px 80px;
+            border-radius: 4px;
+            background-color: #fff8f0;
+            border: 1px solid #8B4513;
+            color: #4b2c14;
+            font-size: 0.9em;
+        }
+
+        .dataTables_length label,
+        .dataTables_filter label {
+            all: unset;
+            font-weight: bold;
+            color: #5c2e0f;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        /* Reset Pagination Buttons */
+        #asetTable_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #8B4513;
+            color: #fff;
+            border: 1px solid #5a2e0d;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Semua state: hover, focus, active */
+        #asetTable_wrapper .dataTables_paginate .paginate_button:hover,
+        #asetTable_wrapper .dataTables_paginate .paginate_button:active,
+        #asetTable_wrapper .dataTables_paginate .paginate_button:focus,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:focus {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #A0522D;
+            color: #fff;
+            border: 1px solid #5a2e0d;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Aktif (halaman sekarang) */
+        #asetTable_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #5a2e0d;
+            color: #fff;
+            border: 1px solid #5a2e0d;
+            font-weight: bold;
+            text-align: center;
+            cursor: default;
+        }
+
+        /* Disabled tombol */
+        #asetTable_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #d9c5b3;
+            color: #777;
+            border: 1px solid #c4a78f;
+            font-weight: 500;
+            text-align: center;
+            cursor: not-allowed;
+            user-select: none;
+        }
+
+        /* Reset Tombol Detail */
+        .tombol-detail,
+        .table .btn {
+            all: unset;
+            display: inline-block;
+            background-color: #8B4513;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid #5a2e0d;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.3s;
+        }
+
+        .tombol-detail:hover,
+        .table .btn:hover {
+            background-color: #A0522D;
+        }
+
+        /* Reset Responsive Layout */
+        @media (max-width: 768px) {
+
+            .dataTables_length,
+            .dataTables_filter {
+                all: unset;
+                display: block;
+                text-align: center;
+                margin-bottom: 8px;
+            }
+        }
+
+        /* Opsional: Reset outline fokus agar benar-benar bersih */
+        *:focus {
+            outline: none;
+        }
+    </style>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const table = $('#asetTable').DataTable({
+                pageLength: 10,
+                lengthMenu: [10, 20, 30, 40, 50, 100, -1],
+                searching: false,
+                ordering: false,
+                language: {
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    paginate: {
+                        previous: "Sebelumnya",
+                        next: "Berikutnya"
+                    },
+                    zeroRecords: "Tidak ditemukan data yang cocok",
+                },
+                drawCallback: function() {
+                    const batasPersen = parseFloat(document.getElementById("batasPersenInput").value) ||
+                        5;
+                    this.api().rows({
+                        page: 'current'
+                    }).every(function() {
+                        const row = this.node();
+                        const nilaiAwalText = this.data()[7].replace(/[^\d]/g, '');
+                        const nilaiSekarangText = this.data()[8].replace(/[^\d]/g, '');
+                        const nilaiAwal = parseFloat(nilaiAwalText) || 0;
+                        const nilaiSekarang = parseFloat(nilaiSekarangText) || 0;
+
+                        row.classList.remove("baris-merah");
+                        row.removeAttribute("title");
+
+                        if ((nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <=
+                                batasPersen) || nilaiSekarang <= 1) {
+                            row.classList.add("baris-merah");
+                            row.title = nilaiSekarang <= 1 ? "Nilai aset di bawah Rp 1" :
+                                "Nilai turun melebihi batas persen";
+                        }
+                    });
+                }
+            });
+
+            // Custom filter kategori & kondisi
+            $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                const kategori = data[3].toLowerCase(); // Kolom kategori
+                const kondisi = data[6].toLowerCase(); // Kolom kondisi
+
+                const kategoriValue = document.getElementById("kategoriFilter").value.toLowerCase();
+                const kondisiValue = document.getElementById("kondisiFilter").value.toLowerCase();
+
+                const matchKategori = kategoriValue === "" || kategori.includes(kategoriValue);
+                const matchKondisi = kondisiValue === "" || kondisi.includes(kondisiValue);
+
+                return matchKategori && matchKondisi;
+            });
+
+            // Trigger redraw saat filter berubah
+            document.getElementById("kategoriFilter").addEventListener("change", function() {
+                table.draw();
+            });
+            document.getElementById("kondisiFilter").addEventListener("change", function() {
+                table.draw();
+            });
+            document.getElementById("batasPersenInput").addEventListener("input", function() {
+                table.draw();
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const tahunInput = document.getElementById("tahunPenurunan");
             const tahun = new Date().getFullYear();
@@ -196,10 +399,10 @@
 
                 if (
                     (nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <= batasPersen) ||
-                    nilaiSekarang < 1000
+                    nilaiSekarang <= 1
                 ) {
                     rows[i].classList.add("baris-merah");
-                    rows[i].title = nilaiSekarang < 1000 ? "Nilai aset di bawah Rp 1.000" :
+                    rows[i].title = nilaiSekarang <= 1 ? "Nilai aset di bawah Rp 1" :
                         "Nilai turun melebihi batas persen";
                 }
 

@@ -27,7 +27,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle" id="tabelPenghapusan">
+        <table class="table table-bordered w-100 table-hover text-center align-middle" id="tabelPenghapusan">
             <thead class="table-container">
                 <tr>
                     <th>No</th>
@@ -38,7 +38,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse ($data as $index => $hapus)
+                @forelse ($data->sortBy('Id_Penghapusan') as $index => $hapus)
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $hapus->Id_Penghapusan }}</td>

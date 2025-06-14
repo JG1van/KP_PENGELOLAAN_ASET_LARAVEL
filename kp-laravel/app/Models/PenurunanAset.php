@@ -13,8 +13,8 @@ class PenurunanAset extends Model
 
     protected $fillable = [
         'Id_Penurunan',
-        'Tahun',
         'Id_Aset',
+        'Tahun',
         'Nilai_Saat_Ini',
     ];
 

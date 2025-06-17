@@ -99,6 +99,12 @@ class Aset extends Model
             'Id_Lokasi'     // FK di DetailPenempatan
         )->orderByDesc('Id_Detail_Penempatan'); // <- ganti jika `latestOfMany()` tidak tersedia
     }
+    public function penempatanTerbaru()
+    {
+        return $this->hasOne(\App\Models\DetailPenempatan::class, 'Id_Aset', 'Id_Aset')
+            ->latest('created_at') // Ambil data terakhir
+            ->with('lokasi'); // Include nama lokasi
+    }
 
 
 }

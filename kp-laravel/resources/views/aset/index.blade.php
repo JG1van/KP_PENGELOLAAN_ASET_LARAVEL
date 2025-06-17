@@ -43,26 +43,41 @@
 
     <div class="table-responsive ">
         <table id="asetTable" class="table table-bordered w-100 table-hover text-center align-middle">
-            <thead class="align-middle">
+            <thead class="align-middle" style="border-bottom: 1px solid #fff">
                 <tr>
-                    <th colspan="7" class="text-end align-middle">Batas Penurunan Nilai (%)</th>
-                    <th colspan="2">
-                        <input id="batasPersenInput" type="number" value="5" min="1" max="100"
-                            class="form-control form-control-sm text-center">
+                    <!-- Kolom Custom Length -->
+                    <th colspan="4" class="text-end align-middle" style="border-bottom: 1px solid #fff;">
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <label class="mb-0 ">Data per Halaman</label>
+                            <div id="customLengthContainer"></div>
+                        </div>
                     </th>
-                    <th></th>
+
+                    <!-- Kolom Batas Penurunan -->
+                    <th colspan="3" class="text-end align-middle" style="border-bottom: 1px solid #fff;">
+                        Batas Penurunan Maksimal (%)
+                    </th>
+
+                    <!-- Input batas persen -->
+                    <th colspan="2" style="border-bottom: 1px solid #fff;">
+                        <input id="batasPersenInput" type="number" value="5" min="1" max="100"
+                            class="form-control form-control-sm text-center" />
+                    </th>
+
+                    <th style="border-bottom: 1px solid #fff;"></th>
                 </tr>
                 <tr>
-                    <th>No</th>
-                    <th>ID Aset</th>
-                    <th style="width: 20%; min-width: 100px">Nama Barang</th>
-                    <th>Kategori</th>
-                    <th>Tanggal Masuk</th>
-                    <th>Status</th>
-                    <th>Kondisi</th>
-                    <th style="width: 12%;">Nilai Awal</th>
-                    <th style="width: 12%;">Nilai Sekarang</th>
-                    <th>Aksi</th>
+                    <th class="text-center" style="width: 5%;">No</th>
+                    <th class="text-center" style="width: 10%;">ID Aset</th>
+                    <th class="text-center" class="text-center" style="width: 12%;">Nama Barang</th> <!-- DIPERKECIL -->
+                    <th class="text-center" style="width: 12%;">Kategori</th>
+                    <th class="text-center" style="width: 12%;">Tanggal Masuk</th>
+                    <th class="text-center" style="width: 10%;">Status</th>
+                    <th class="text-center" style="width: 10%;">Kondisi</th>
+                    <th class="text-center" style="width: 12%;">Nilai Awal</th>
+                    <th class="text-center" style="width: 12%;">Nilai Sekarang</th>
+                    <th class="text-center" style="width: 5%;">Aksi</th>
+
                 </tr>
 
             </thead>
@@ -168,7 +183,7 @@
         .dataTables_filter label {
             all: unset;
             font-weight: bold;
-            color: #5c2e0f;
+            color: #ffff;
             display: inline-block;
             margin-right: 6px;
         }
@@ -282,6 +297,73 @@
         *:focus {
             outline: none;
         }
+
+        .page-link {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #D79771;
+            /* cokelat tua (sesuai tombol biasa) */
+            color: #fff;
+            border: 1px solid #5a2e0d;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+
+        .page-link:hover,
+        .page-link:focus,
+        .page-link:active {
+            background-color: #FFF4E0;
+            /* warna hover (lebih terang sedikit) */
+            color: #000000;
+            border: 1px solid #5a2e0d;
+        }
+
+        .active>.page-link,
+        .page-link.active {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #5a2e0d;
+            /* warna aktif (cokelat lebih gelap) */
+            color: #fff;
+            border: 1px solid #5a2e0d;
+            font-weight: bold;
+            text-align: center;
+            cursor: default;
+        }
+
+        .page-item.disabled .page-link {
+            all: unset;
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 6px;
+            background-color: #d9c5b3;
+            color: #777;
+            border: 1px solid #c4a78f;
+            text-align: center;
+            cursor: not-allowed;
+            user-select: none;
+        }
+
+        /* Ukuran tulisan untuk info jumlah data */
+        #asetTable_wrapper .dataTables_info {
+            all: unset;
+            display: block;
+            font-size: 0.85rem;
+            color: #000000;
+            font-weight: 500;
+            font-size: 10px margin-top: 6px;
+            /* opsional untuk jarak */
+        }
     </style>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
@@ -291,57 +373,113 @@
             const table = $('#asetTable').DataTable({
                 pageLength: 10,
                 lengthMenu: [10, 20, 30, 40, 50, 100, -1],
+                pagingType: 'full_numbers',
                 searching: false,
                 ordering: false,
+
                 language: {
-                    lengthMenu: "Tampilkan _MENU_ data",
+                    lengthMenu: " _MENU_ ",
                     info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
                     paginate: {
-                        previous: "Sebelumnya",
-                        next: "Berikutnya"
+                        previous: "<",
+                        next: ">"
                     },
                     zeroRecords: "Tidak ditemukan data yang cocok",
                 },
-                drawCallback: function() {
+                initComplete: function() {
+                    // Ambil elemen length (Tampilkan _ data)
+                    const lengthContainer = $(this.api().table().container()).find(
+                        '.dataTables_length');
+
+                    // Pindahkan lengthContainer ke div #customLengthContainer
+                    $('#customLengthContainer').empty().append(lengthContainer);
+                },
+
+
+                drawCallback: function(settings) {
                     const batasPersen = parseFloat(document.getElementById("batasPersenInput").value) ||
                         5;
-                    this.api().rows({
+
+                    const api = this.api();
+                    api.rows({
                         page: 'current'
                     }).every(function() {
                         const row = this.node();
-                        const nilaiAwalText = this.data()[7].replace(/[^\d]/g, '');
-                        const nilaiSekarangText = this.data()[8].replace(/[^\d]/g, '');
-                        const nilaiAwal = parseFloat(nilaiAwalText) || 0;
-                        const nilaiSekarang = parseFloat(nilaiSekarangText) || 0;
+                        const nilaiAwal = parseFloat(this.data()[7].replace(/[^\d]/g, '')) || 0;
+                        const nilaiSekarang = parseFloat(this.data()[8].replace(/[^\d]/g,
+                            '')) || 0;
 
                         row.classList.remove("baris-merah");
                         row.removeAttribute("title");
 
-                        if ((nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <=
-                                batasPersen) || nilaiSekarang <= 1) {
+                        const persentaseTurun = (nilaiAwal > 0) ? (nilaiSekarang / nilaiAwal) *
+                            100 : 100;
+
+                        if (persentaseTurun <= batasPersen || nilaiSekarang <= 1) {
                             row.classList.add("baris-merah");
-                            row.title = nilaiSekarang <= 1 ? "Nilai aset di bawah Rp 1" :
+                            row.title = nilaiSekarang <= 1 ?
+                                "Nilai aset di bawah Rp 1" :
                                 "Nilai turun melebihi batas persen";
                         }
                     });
+
+                    // === Pagination Dinamis ===
+                    const pagination = $(this)
+                        .closest('.dataTables_wrapper')
+                        .find('.dataTables_paginate ul.pagination');
+
+                    // Hapus tombol 'First' dan 'Last' jika ada
+                    pagination.find('li.paginate_button.first, li.paginate_button.last').remove();
+
+                    const pageLinks = pagination.find('li.paginate_button:not(.previous):not(.next)');
+                    const totalPages = pageLinks.length;
+                    const currentPage = pagination.find('li.paginate_button.current').index() - 1;
+
+                    const windowSize = 3;
+                    const start = Math.max(1, currentPage);
+                    const end = Math.min(start + windowSize - 1, totalPages - 2);
+
+                    // Reset semua tampil dulu
+                    pageLinks.show();
+                    pagination.find('li.ellipsis').remove();
+
+                    pageLinks.each(function(index, el) {
+                        const pageNumber = parseInt($(el).text());
+
+                        // Sembunyikan semua dulu
+                        $(el).hide();
+
+                        // Tampilkan hanya halaman aktif dan 2 halaman berikutnya
+                        if (!isNaN(pageNumber) && pageNumber >= currentPage && pageNumber <=
+                            currentPage + 2) {
+                            $(el).show();
+
+                            // Tambahkan event listener (gunakan one() agar tidak double klik)
+                            $(el).off('click').one('click', function() {
+                                let output = "";
+                                for (let i = 0; i < 3; i++) {
+                                    output += (pageNumber + i);
+                                }
+                                alert("Output halaman: " + output);
+                            });
+                        }
+                    });
+
                 }
             });
 
-            // Custom filter kategori & kondisi
+            // === Filter kategori & kondisi ===
             $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                const kategori = data[3].toLowerCase(); // Kolom kategori
-                const kondisi = data[6].toLowerCase(); // Kolom kondisi
-
+                const kategori = data[3].toLowerCase();
+                const kondisi = data[6].toLowerCase();
                 const kategoriValue = document.getElementById("kategoriFilter").value.toLowerCase();
                 const kondisiValue = document.getElementById("kondisiFilter").value.toLowerCase();
 
-                const matchKategori = kategoriValue === "" || kategori.includes(kategoriValue);
-                const matchKondisi = kondisiValue === "" || kondisi.includes(kondisiValue);
-
-                return matchKategori && matchKondisi;
+                return (kategoriValue === "" || kategori.includes(kategoriValue)) &&
+                    (kondisiValue === "" || kondisi.includes(kondisiValue));
             });
 
-            // Trigger redraw saat filter berubah
+            // === Event Filter dan Input ===
             document.getElementById("kategoriFilter").addEventListener("change", function() {
                 table.draw();
             });

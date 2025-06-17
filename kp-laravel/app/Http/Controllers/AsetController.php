@@ -18,7 +18,8 @@ class AsetController extends Controller
         $data = Aset::with([
             'kategori:Id_Kategori,Nama_Kategori',
             'detailPenerimaan.penerimaan:Id_Penerimaan,Tanggal_Terima',
-            'PenurunanTerbaru:Id_Penurunan,Id_Aset,Nilai_Saat_Ini'
+            'PenurunanTerbaru:Id_Penurunan,Id_Aset,Nilai_Saat_Ini',
+            'penempatanTerakhir.lokasi:Id_Lokasi,Nama_Lokasi'
         ])->get();
 
         $kategoriList = cache()->remember('kategori_list', 60, fn() => Kategori::all());

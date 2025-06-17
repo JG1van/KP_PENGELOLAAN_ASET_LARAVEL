@@ -19,6 +19,8 @@
                     <label>Nama Aset</label>
                     <input type="text" class="form-control" name="Nama_Aset" value="{{ $aset->Nama_Aset }}" required>
                 </div>
+            </div>
+            <div class="row mb-3">
                 <div class="col-6">
                     <label>Kategori</label>
                     <select name="Id_Kategori" class="form-select " required>
@@ -30,7 +32,12 @@
                         @endforeach
                     </select>
                 </div>
-
+                <div class="col-6">
+                    <label>Lokasi</label>
+                    <input type="text" class="form-control"
+                        value="{{ $aset->penempatanTerbaru && $aset->penempatanTerbaru->lokasi ? $aset->penempatanTerbaru->lokasi->Nama_Lokasi : 'Belum Ditempatkan' }}"
+                        readonly>
+                </div>
             </div>
             <div class="row mb-3">
                 <div class="col-6">

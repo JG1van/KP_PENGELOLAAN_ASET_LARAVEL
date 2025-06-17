@@ -210,58 +210,31 @@ main .card {
     background-color: var(--warna0);
     box-shadow: none;
     border-bottom: 10px solid var(--warna2);
-    margin-bottom: 10px;
-
     max-height: 500px;
     overflow-y: auto;
+    margin: 0;
+    border-radius: 16px;
+}
+
+.card-custom {
+    min-height: 290px;
+}
+
+@media (max-width: 768px) {
+    .card-custom {
+        min-height: auto !important;
+        /* agar di HP tidak terlalu tinggi */
+    }
 }
 
 
-
-.table-responsive {
+table {
     width: 100%;
-    overflow: hidden;
-    /* Tidak bisa digeser */
+    border-collapse: collapse;
     border-radius: 10px;
-    background-color: #fff;
-}
+    overflow: hidden;
 
-.table-responsive table {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    table-layout: fixed;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid #8b4513;
 }
-
-.table-responsive th,
-.table-responsive td {
-    padding: 10px 12px;
-    border: 1px solid #8b4513;
-    text-align: center;
-    word-wrap: break-word;
-    /* Untuk memaksa pemisahan kata */
-    white-space: normal;
-    /* Hindari pemaksaan panjang baris */
-    overflow-wrap: break-word;
-}
-
-/* Sudut atas membulat */
-.table-responsive thead th:first-child {
-    border-top-left-radius: 10px;
-}
-
-.table-responsive thead th:last-child {
-    border-top-right-radius: 10px;
-}
-
-/* Hover efek */
-.table-responsive tbody tr:hover {
-    background-color: #fff3e6;
-}
-
 
 thead {
     background-color: var(--warna2);
@@ -425,7 +398,6 @@ main .btn-sm-2:focus {
 
 .baris-terisi {
     background-color: var(--warna4) !important;
-    /* hijau muda */
 }
 
 .baris-merah {
@@ -433,12 +405,6 @@ main .btn-sm-2:focus {
     color: #990000 !important;
 }
 
-.equal-width-table th,
-.equal-width-table td {
-    width: 90px;
-    /* Atau sesuaikan misalnya 8%, 10%, dst */
-    word-wrap: break-word;
-}
 
 @media (min-width: 768px) {
     .video-box {

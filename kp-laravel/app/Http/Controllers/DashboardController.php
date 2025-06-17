@@ -61,6 +61,14 @@ class DashboardController extends Controller
                 ];
             });
         $totalNilaiAsetSaatIni = $totalNilaiAsetAktif + $totalNilaiAsetTidakAktif;
+        // Data Penempatan per Lokasi untuk Chart
+        $dataPenempatan = DB::table('detail_penempatan_aset')
+            ->rightJoin('aset', 'detail_penempatan_aset.Id_Aset', '=', 'aset.Id_Aset')
+            ->leftJoin('lokasi', 'detail_penempatan_aset.Id_Lokasi', '=', 'lokasi.Id_Lokasi')
+            ->selectRaw("COALESCE(lokasi.Nama_Lokasi, 'Belum Ditempatkan') as Nama_Lokasi, COUNT(*) as total")
+            ->groupBy('Nama_Lokasi')
+            ->pluck('total', 'Nama_Lokasi');
+
 
         // Kirim semua data ke view
         return view('dashboard', compact(
@@ -73,7 +81,8 @@ class DashboardController extends Controller
             'totalNilaiAwalAset',
             'dataKondisi',
             'dataKategori',
-            'dataAsetPerTahun'
+            'dataAsetPerTahun',
+            'dataPenempatan'
         ));
     }
 }

@@ -59,7 +59,7 @@
             <table class="table table-bordered w-100 table-hover text-center align-middle">
                 <thead>
                     <tr>
-                        <th colspan="6" class="text-end align-middle">Batas Penurunan Nilai (%)</th>
+                        <th colspan="6" class="text-end align-middle">Batas Penurunan Maksimal (%)</th>
                         <th colspan="1">
                             <input id="batasPersenInput" type="number" value="5" min="1" max="100"
                                 class="form-control form-control-sm text-center">
@@ -194,38 +194,58 @@
                 });
             });
 
-            // Highlight nilai rendah jika <= batas persen
-            document.getElementById("batasPersenInput").addEventListener("input", function() {
-                const batas = parseFloat(this.value);
+            const batasInput = document.getElementById("batasPersenInput");
+
+            function updatePeringatanDanWarnaBaris() {
+                const batas = parseFloat(batasInput.value) || 5;
+
                 document.querySelectorAll("#daftarAset tr").forEach(row => {
                     const nilaiAwal = parseFloat(row.dataset.nilaiAwal || 0);
                     const nilaiSekarang = parseFloat(row.dataset.nilaiSekarang || 0);
                     const ikon = row.querySelector(".ikon-peringatan");
+                    const cell = row.cells[4]; // Tempat ikon ditampilkan
+                    const isNilaiRendah = (nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <=
+                        batas) || nilaiSekarang <= 1;
 
-                    if (nilaiAwal > 0 && (nilaiSekarang / nilaiAwal) * 100 <= batas) {
+                    // Tambah/hapus ikon peringatan
+                    if (isNilaiRendah) {
                         if (!ikon) {
-                            const cell = row.cells[4];
                             const i = document.createElement("i");
-                            i.className = "fas fa-exclamation-triangle ikon-peringatan";
-                            i.title = "Nilai aset rendah";
+                            i.className =
+                                "fas fa-exclamation-triangle ikon-peringatan text-danger ms-2";
+                            i.title = nilaiSekarang <= 1 ? "Nilai aset di bawah Rp 1" :
+                                "Nilai aset rendah";
                             cell.appendChild(i);
+                        } else {
+                            ikon.title = nilaiSekarang <= 1 ? "Nilai aset di bawah Rp 1" :
+                                "Nilai aset rendah";
                         }
                     } else {
                         if (ikon) ikon.remove();
                     }
-                });
-            });
-            // Tambahkan warna jika select dipilih manual
-            document.querySelectorAll('#daftarAset select.form-select').forEach(select => {
-                select.addEventListener('change', function() {
-                    const row = this.closest('tr');
-                    if (this.value) {
-                        row.classList.add('baris-terisi');
+
+                    // Tambahkan warna jika select kondisi dipilih
+                    const select = row.querySelector('select.form-select');
+                    if (select && select.value.trim() !== "" && select.value !== "0") {
+                        row.classList.add("baris-terisi");
                     } else {
-                        row.classList.remove('baris-terisi');
+                        row.classList.remove("baris-terisi");
                     }
                 });
+            }
+
+            // Event ketika input batas persen diubah
+            batasInput.addEventListener("input", updatePeringatanDanWarnaBaris);
+
+            // Event ketika select kondisi berubah (manual)
+            document.querySelectorAll('#daftarAset select.form-select').forEach(select => {
+                select.addEventListener('change', updatePeringatanDanWarnaBaris);
             });
+
+            // Jalankan saat awal load juga
+            updatePeringatanDanWarnaBaris();
+
+
 
             document.getElementById("btnTriggerConfirm").addEventListener("click", function() {
                 const modalEl = document.getElementById("globalConfirmModal");

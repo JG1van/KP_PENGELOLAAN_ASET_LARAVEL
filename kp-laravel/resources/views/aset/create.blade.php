@@ -9,7 +9,7 @@
 
         <div class="mb-3">
             <label for="tanggal_penerimaan" class="form-label required">Tanggal Penerimaan</label>
-            <input type="date" class="form-control" id="tanggal_penerimaan" name="tanggal_penerimaan" required />
+            <input type="date" class="form-control" id="tanggal_penerimaan" name="tanggal_penerimaan" required readonly />
         </div>
 
         <div class="row mb-3">
